@@ -75,6 +75,30 @@ The app is locked to landscape orientation (`app.json`).
   curve tracking per kart, lap increment on finish-line crossing, 3-lap
   races, live standings computed from lap + progress (falls back to finish
   time once a kart completes the race).
+- **Collision physics** (`src/game/physics.js`) — `resolveKartCollisions`
+  does a circle-vs-circle push-apart between every pair of karts each frame
+  (soft-body separation plus a little speed bleed, so bumping another kart
+  slows both of you down a bit rather than clipping through); `track.js`'s
+  `buildScenery` now returns collision circles for stalls, buildings and
+  matatus, and `resolveSceneryCollisions` pushes karts back out of them with
+  a speed penalty on impact (crowd figures stay non-blocking).
+- **Off-track boundary** (`applyOffTrackPenalty` in `physics.js`) — no hard
+  wall/rail; a kart that strays past the road edge (measured against its
+  nearest-point-on-curve distance, same sampling raceLogic already does for
+  lap progress) gets progressively more speed drag the further off-road it
+  goes. This was chosen over a rigid rail because the market-street track
+  has open square-like widenings where a wall would feel wrong.
+- **Audio** (`src/audio/soundEngine.js`) — procedurally synthesized, no
+  external asset files: raw PCM sample data (sawtooth/sine oscillators plus
+  a deterministic noise function) is generated in pure JS, packed into a WAV
+  container, base64-encoded, and played via `expo-av` from a `data:` URI.
+  Covers a looping engine hum (pitch/volume follow the player kart's speed
+  via `setStatusAsync({ rate })`, boosted further while a mini-turbo/item
+  boost is active), a mini-turbo boost whoosh, an item-pickup blip, and a
+  shell-hit thud. Only the player's actions trigger one-shot sfx (AI karts
+  don't spam sound); init/shutdown fail soft (logs a warning, race stays
+  playable silently) if `expo-av` or audio playback isn't available on a
+  given platform.
 
 ## Known limitations / untested
 
@@ -95,17 +119,25 @@ The app is locked to landscape orientation (`app.json`).
   — `expo-gl` and `expo-sensors` (Accelerometer) have partial/inconsistent
   web support; touch controls should still work, tilt steering will
   silently no-op on web (falls back safely, does not crash).
-- **Collision detection between karts, and kart-vs-scenery collision, is
-  not implemented** — karts and props currently do not physically block
-  each other; only camera-vs-scenery uses raycasting. This is the biggest
-  functional gap vs. a full game and the next thing to add.
-- **Track boundaries are not enforced** — a kart can currently drive off
-  the road onto the surrounding ground plane without penalty; there's no
-  off-track speed penalty or wall bounce-back.
+- **Kart-vs-kart and kart-vs-scenery collisions, and the off-track
+  penalty, are implemented but unverified at runtime** — the same caveat as
+  the rest of this slice: written to be internally consistent (circle-vs-
+  circle math, unit-tested only by re-reading, not by running) but not
+  played on a device. Tuning values (collision radii, push-apart strength,
+  off-track drag curve) are first-pass guesses likely to need adjustment.
+- **Audio is implemented but unverified at runtime** — the WAV-synthesis +
+  `expo-av` playback path (`src/audio/soundEngine.js`) has been reviewed by
+  re-reading (WAV header layout, base64 encoding, PCM sample generation)
+  but never actually played back, since this environment has no
+  speaker/device. If `expo-av`'s `Audio.Sound.createAsync` rejects a
+  `data:` URI on some platform, or `setStatusAsync({ rate })` behaves
+  differently than expected, engine pitch or one-shot playback may need
+  adjustment — the module fails soft either way (logs and continues
+  without sound) rather than crashing the race.
 - **Physics tuning is a first pass**, not iterated against real hands-on
   playtesting (impossible without a device here) — expect acceleration,
-  drift feel, and AI difficulty to need adjustment once played for real.
-- **No audio** — sound effects/music were out of scope for this slice.
+  drift feel, collision response, and AI difficulty to need adjustment once
+  played for real.
 - **Single track, single race mode** — no track selection, no cups/series,
   no multiplayer.
 - **Performance on low-end devices is unverified** — the scene has a
@@ -134,6 +166,8 @@ src/
     MenuScreen.js, HUD.js, ResultsScreen.js, TouchControls.js
   input/
     useTiltSteering.js         # expo-sensors accelerometer hook
+  audio/
+    soundEngine.js              # procedural WAV synthesis + expo-av playback
 ```
 
 ## License / attribution

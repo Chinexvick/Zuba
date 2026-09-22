@@ -3,7 +3,7 @@
 // items, camera, HUD state). Rendering stack differs from the browser-based
 // Three.js reference (expo-gl instead of a DOM canvas), so the render/loop
 // wiring here is written from scratch for React Native.
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { GLView } from 'expo-gl';
 import * as THREE from 'three';
@@ -27,6 +27,14 @@ import { createAIController, updateAI } from '../game/ai';
 import { placeItemBoxes, buildItemBoxMesh, updateItemBoxes, checkItemPickup, useItem } from '../game/items';
 import { updateChaseCamera } from '../game/camera';
 import { updateLapProgress, computeStandings, TOTAL_LAPS } from '../game/raceLogic';
+import {
+  initAudio,
+  shutdownAudio,
+  updateEngineAudio,
+  playBoost,
+  playPickup,
+  playShellHit,
+} from '../audio/soundEngine';
 
 import HUD from '../ui/HUD';
 import TouchControls from '../ui/TouchControls';
@@ -51,12 +59,23 @@ export default function RaceScene({ characterId, onFinish }) {
   const worldRef = useRef(null); // holds three scene state across frames
   const finishedRef = useRef(false);
 
+  // Procedurally synthesized audio (engine hum + sfx) — see src/audio/soundEngine.js.
+  // Initialized once on mount; fails soft if audio playback isn't available.
+  useEffect(() => {
+    initAudio();
+    return () => {
+      shutdownAudio();
+    };
+  }, []);
+
   const handleUseItem = useCallback(() => {
     const world = worldRef.current;
     if (!world) return;
     const result = useItem(world.player, world.allKarts);
     if (result) {
       setHud((h) => ({ ...h, itemSlot: null }));
+      if (result.type === 'boost') playBoost();
+      else if (result.type === 'shell' && result.target) playShellHit();
     }
   }, []);
 
@@ -153,7 +172,9 @@ export default function RaceScene({ characterId, onFinish }) {
         if (input.driftHeld && !world.player.isDrifting && Math.abs(world.player.steerInput) > 0.2) {
           startDrift(world.player, Math.sign(world.player.steerInput));
         } else if (!input.driftHeld && world.player.isDrifting) {
+          const tierBeforeRelease = currentDriftTier(world.player);
           releaseDrift(world.player);
+          if (tierBeforeRelease >= 0) playBoost();
         }
 
         // --- AI ---
@@ -185,7 +206,10 @@ export default function RaceScene({ characterId, onFinish }) {
 
         // --- items ---
         updateItemBoxes(world.itemBoxes, dt);
-        world.allKarts.forEach((kart) => checkItemPickup(kart, world.itemBoxes));
+        world.allKarts.forEach((kart) => {
+          const pickedUp = checkItemPickup(kart, world.itemBoxes);
+          if (pickedUp && kart.isPlayer) playPickup();
+        });
         world.itemMeshes.forEach((mesh, i) => {
           mesh.visible = world.itemBoxes[i].active;
           mesh.rotation.y += dt * 1.5;
@@ -204,6 +228,14 @@ export default function RaceScene({ characterId, onFinish }) {
 
         // --- camera ---
         updateChaseCamera(camera, world.player, dt, scene, world.collidables);
+
+        // --- engine audio (pitch/volume follow player speed) ---
+        const playerTopSpeed = 14 + world.player.spec.stats.topSpeed * 12;
+        updateEngineAudio({
+          speed: world.player.speed,
+          topSpeed: playerTopSpeed,
+          boosting: world.player.boostTimer > 0,
+        });
 
         // --- HUD ---
         const standings = computeStandings(world.allKarts);

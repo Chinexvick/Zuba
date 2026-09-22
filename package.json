@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "expo": "~51.0.0",
+    "expo-av": "~14.0.7",
     "expo-gl": "~14.0.2",
     "expo-sensors": "~13.0.9",
     "expo-status-bar": "~1.12.1",
