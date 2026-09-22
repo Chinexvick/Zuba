@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Zuba Kart",
+    "slug": "zuba-kart",
+    "version": "0.1.0",
+    "orientation": "landscape",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.zuba.kart"
+    },
+    "android": {
+      "package": "com.zuba.kart",
+      "adaptiveIcon": {
+        "backgroundColor": "#E08A2B"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
