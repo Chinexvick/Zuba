@@ -139,3 +139,86 @@ export function applyStun(kart, duration = 1.4) {
   kart.stunTimer = duration;
   kart.speed *= 0.2;
 }
+
+// --- Kart-vs-kart collision -------------------------------------------------
+// Simple circle-vs-circle push-apart (soft body, not a full rigid-body sim):
+// overlapping karts are separated along the line between their centers and
+// both lose a little speed, proportional to how hard they hit. Runs once per
+// frame over every pair; kart count here is small (player + a few AI) so an
+// O(n^2) sweep is fine.
+const KART_RADIUS = 0.9; // approx. half-width of a kart body for collision purposes
+
+export function resolveKartCollisions(karts) {
+  for (let i = 0; i < karts.length; i++) {
+    for (let j = i + 1; j < karts.length; j++) {
+      const a = karts[i];
+      const b = karts[j];
+      const dx = b.position.x - a.position.x;
+      const dz = b.position.z - a.position.z;
+      const distSq = dx * dx + dz * dz;
+      const minDist = KART_RADIUS * 2;
+      if (distSq >= minDist * minDist || distSq < 1e-6) continue;
+
+      const dist = Math.sqrt(distSq);
+      const overlap = minDist - dist;
+      const nx = dx / dist;
+      const nz = dz / dist;
+
+      // push both karts apart equally along the collision normal
+      a.position.x -= nx * overlap * 0.5;
+      a.position.z -= nz * overlap * 0.5;
+      b.position.x += nx * overlap * 0.5;
+      b.position.z += nz * overlap * 0.5;
+
+      // bump: bleed off some speed on both, a bit more for the faster one,
+      // and nudge heading slightly away from the hit so it reads as a shove
+      // rather than a wall stop
+      const relSpeed = Math.abs(a.speed) + Math.abs(b.speed);
+      const speedLoss = Math.min(0.35, relSpeed * 0.02);
+      a.speed *= 1 - speedLoss;
+      b.speed *= 1 - speedLoss;
+      a.heading -= Math.sign(a.speed || 1) * 0.02;
+      b.heading += Math.sign(b.speed || 1) * 0.02;
+    }
+  }
+}
+
+// --- Kart-vs-scenery collision ----------------------------------------------
+// `obstacles` is an array of { x, z, radius } circles built alongside the
+// roadside props in track.js. Karts are pushed back out of any circle they
+// penetrate and lose speed proportional to the impact, like driving into a
+// market stall.
+const KART_SCENERY_RADIUS = 0.8;
+
+export function resolveSceneryCollisions(kart, obstacles) {
+  if (!obstacles || !obstacles.length) return;
+  for (let k = 0; k < obstacles.length; k++) {
+    const ob = obstacles[k];
+    const dx = kart.position.x - ob.x;
+    const dz = kart.position.z - ob.z;
+    const distSq = dx * dx + dz * dz;
+    const minDist = KART_SCENERY_RADIUS + ob.radius;
+    if (distSq >= minDist * minDist || distSq < 1e-6) continue;
+
+    const dist = Math.sqrt(distSq);
+    const overlap = minDist - dist;
+    const nx = dx / dist;
+    const nz = dz / dist;
+    kart.position.x += nx * overlap;
+    kart.position.z += nz * overlap;
+    kart.speed *= Math.max(0.35, 1 - overlap * 0.5);
+  }
+}
+
+// --- Off-track boundary enforcement -----------------------------------------
+// The track has no physical rails, so straying past the road edge just
+// costs speed (like driving onto dirt/gravel) rather than hard-blocking the
+// kart — this fits the open market-street layout better than a wall bounce.
+export function applyOffTrackPenalty(kart, distanceFromCenter, trackHalfWidth, dt) {
+  const overshoot = distanceFromCenter - trackHalfWidth;
+  kart.offTrack = overshoot > 0;
+  if (overshoot <= 0) return;
+  // heavier drag the further off-road, capped so it doesn't feel like a wall
+  const dragPerSecond = Math.min(0.9, 0.35 + overshoot * 0.06);
+  kart.speed *= Math.max(0, 1 - dragPerSecond * dt);
+}

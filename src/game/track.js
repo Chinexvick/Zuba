@@ -262,11 +262,23 @@ function buildCrowdFigure(color) {
   return group;
 }
 
+// Approximate collision radius (in the road XZ plane) for each prop type,
+// used to build kart-vs-scenery collision circles. Crowd figures are left
+// out of collision (too small/forgiving to bother blocking on).
+const PROP_COLLISION_RADIUS = {
+  stall: 1.3,
+  building: 2.4,
+  matatu: 1.4,
+};
+
 // Scatter roadside scenery just outside the road edges along the curve.
+// Returns the list of static collision circles ({ x, z, radius }) alongside
+// adding the meshes to the scene, so physics can block karts against them.
 export function buildScenery(curve, scene) {
   const segments = 90;
   const pts = curve.getSpacedPoints(segments);
   let stallToggle = 0;
+  const obstacles = [];
   for (let i = 0; i < segments; i += 3) {
     const p = pts[i];
     const next = pts[(i + 1) % pts.length];
@@ -279,9 +291,11 @@ export function buildScenery(curve, scene) {
 
     const choice = i % 9;
     let prop;
+    let collisionType = null;
     if (choice < 4) {
       prop = buildMarketStall(STALL_COLORS[stallToggle % STALL_COLORS.length]);
       stallToggle++;
+      collisionType = 'stall';
     } else if (choice < 6) {
       prop = buildBuilding(
         4 + (i % 3),
@@ -290,9 +304,11 @@ export function buildScenery(curve, scene) {
         STALL_COLORS[(i + 2) % STALL_COLORS.length],
         STALL_COLORS[(i + 4) % STALL_COLORS.length]
       );
+      collisionType = 'building';
     } else if (choice < 7) {
       prop = buildMatatu(STALL_COLORS[(i + 1) % STALL_COLORS.length]);
       prop.rotation.y = Math.atan2(dir.x, dir.z) + (side > 0 ? Math.PI / 2 : -Math.PI / 2);
+      collisionType = 'matatu';
     } else {
       prop = buildCrowdFigure(STALL_COLORS[(i + 3) % STALL_COLORS.length]);
     }
@@ -301,7 +317,12 @@ export function buildScenery(curve, scene) {
       prop.rotation.y = Math.atan2(dir.x, dir.z);
     }
     scene.add(prop);
+
+    if (collisionType) {
+      obstacles.push({ x: pos.x, z: pos.z, radius: PROP_COLLISION_RADIUS[collisionType] });
+    }
   }
+  return obstacles;
 }
 
 export function buildTrack(scene) {
@@ -310,7 +331,7 @@ export function buildTrack(scene) {
   scene.add(buildGround());
   scene.add(buildSky());
   scene.add(road);
-  buildScenery(curve, scene);
+  const obstacles = buildScenery(curve, scene);
 
   // simple hemisphere + directional light for warm market-afternoon look
   const hemi = new THREE.HemisphereLight('#ffe3b0', '#7a4a22', 0.9);
@@ -319,7 +340,7 @@ export function buildTrack(scene) {
   sun.position.set(40, 60, 20);
   scene.add(sun);
 
-  return { curve, road };
+  return { curve, road, obstacles };
 }
 
 export const TRACK_WIDTH = ROAD_WIDTH;

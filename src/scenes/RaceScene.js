@@ -18,6 +18,9 @@ import {
   startDrift,
   releaseDrift,
   currentDriftTier,
+  resolveKartCollisions,
+  resolveSceneryCollisions,
+  applyOffTrackPenalty,
 } from '../game/physics';
 import { sampleCurve, nearestPointOnCurve, startGridPosition } from '../game/trackUtils';
 import { createAIController, updateAI } from '../game/ai';
@@ -71,7 +74,7 @@ export default function RaceScene({ characterId, onFinish }) {
         500
       );
 
-      const { curve } = buildTrack(scene);
+      const { curve, obstacles } = buildTrack(scene);
       const samples = sampleCurve(curve);
 
       // collect roadside props for camera collision avoidance
@@ -124,6 +127,7 @@ export default function RaceScene({ characterId, onFinish }) {
         itemBoxes,
         itemMeshes,
         collidables,
+        obstacles,
         raceTime: 0,
       };
 
@@ -169,8 +173,15 @@ export default function RaceScene({ characterId, onFinish }) {
         // --- physics ---
         world.allKarts.forEach((kart) => updateKartPhysics(kart, dt, world.raceTime));
 
-        // --- lap progress ---
-        world.allKarts.forEach((kart) => updateLapProgress(kart, world.samples, world.raceTime));
+        // --- collisions: karts vs each other, karts vs roadside scenery ---
+        resolveKartCollisions(world.allKarts);
+        world.allKarts.forEach((kart) => resolveSceneryCollisions(kart, world.obstacles));
+
+        // --- lap progress + off-track boundary penalty ---
+        world.allKarts.forEach((kart) => {
+          const nearest = updateLapProgress(kart, world.samples, world.raceTime);
+          applyOffTrackPenalty(kart, nearest.distance, TRACK_WIDTH / 2, dt);
+        });
 
         // --- items ---
         updateItemBoxes(world.itemBoxes, dt);
