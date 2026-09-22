@@ -17,6 +17,9 @@ import Wallpaper from './components/Wallpaper'
 import Mesh from './components/Mesh'
 import Comic from './components/Comic'
 import Games from './components/Games'
+import Universe from './components/Universe'
+import GamesShowcase from './components/GamesShowcase'
+import AnimationTeaser from './components/AnimationTeaser'
 
 export default function App() {
   const [page, setPage] = useState('home')
@@ -75,11 +78,14 @@ export default function App() {
         {page === 'home' && (
           <>
             <Hero />
+            <Universe />
+            <GamesShowcase onNavigate={handleNavigate} />
+            <AnimationTeaser />
             <Banner />
-            <HowToBuy />
-            <Contact />
             <Products />
+            <HowToBuy />
             <Tokenomics />
+            <Contact />
             <Partners />
           </>
         )}

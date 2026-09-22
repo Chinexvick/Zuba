@@ -9,6 +9,7 @@ export default function Games(){
   return (
     <section className="comic-page reveal-up">
       <div className="comic-content">
+        <span className="eyebrow eyebrow-light">PLAYABLE ADVENTURES</span>
         <h1 className="comic-title">ZUBA Games</h1>
         <p className="comic-lead">Playable experiences are coming — preview locked screens below.</p>
 

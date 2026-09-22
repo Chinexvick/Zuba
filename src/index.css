@@ -1334,3 +1334,302 @@ body.mobile-menu-open{
   .footer-brand{font-size:48px}
   .footer-links{margin-left:0}
 }
+
+/* =====================================================================
+   ZUBA UNIVERSE — CINEMATIC REDESIGN
+   African mythology x AAA gaming x anime x cinema.
+   These rules load after the base styles above and intentionally
+   override colors, type and key sections for a premium franchise feel.
+   ===================================================================== */
+
+:root{
+  --z-ink: #07050c;
+  --z-ink-2: #0d0917;
+  --z-purple: #6a3bd1;
+  --z-purple-deep: #2a1350;
+  --z-violet: #a86bff;
+  --z-gold: #ffc94a;
+  --z-gold-deep: #e8960f;
+  --z-white: #f6f3ff;
+  --z-display: 'Anton', 'Bebas Neue', 'Luckiest Guy', 'Poppins', sans-serif;
+  --z-body: 'Poppins', system-ui, sans-serif;
+}
+
+body{
+  background-color: var(--z-ink);
+  background-image:
+    radial-gradient(1200px 600px at 85% -10%, rgba(168,107,255,0.20), transparent 60%),
+    radial-gradient(900px 500px at 5% 110%, rgba(255,201,74,0.10), transparent 60%),
+    url('/assets/backgroug.png');
+  background-size: cover, cover, cover;
+  background-position: center, center, right center;
+}
+body::after{
+  background: linear-gradient(180deg, rgba(7,5,12,0.86) 0%, rgba(7,5,12,0.55) 32%, rgba(7,5,12,0.88) 100%);
+}
+/* subtle film-grain vignette over everything */
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 15%, transparent 45%, rgba(0,0,0,0.55) 100%);
+  mix-blend-mode: multiply;
+}
+
+/* ---------- Header ---------- */
+.site-header{
+  background: rgba(9,6,18,0.62);
+  border: 1px solid rgba(255,255,255,0.07);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+}
+.brand-name{ font-family: var(--z-display); letter-spacing: 1.5px; text-shadow: 0 2px 12px rgba(168,107,255,0.5) }
+.nav a{ font-family: var(--z-body); font-weight:600; font-size:15px; letter-spacing:.2px; opacity:.92; transition: opacity .2s, color .2s }
+.nav a:hover{ opacity:1; color: var(--z-gold) }
+.nav a.nav-token{
+  border: 1px solid rgba(255,201,74,0.45);
+  padding: 6px 14px;
+  border-radius: 999px;
+  color: var(--z-gold);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+.join-btn{ background: linear-gradient(180deg, var(--z-gold), var(--z-gold-deep)); box-shadow: 0 6px 0 #9a6206, 0 14px 24px rgba(0,0,0,0.35) }
+
+/* ---------- Cinematic Hero ---------- */
+.hero-cinematic{
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 160px 24px 120px;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+}
+.hero-bg{
+  position:absolute; inset:-6% -6%;
+  background-size: cover; background-position: right center; background-repeat:no-repeat;
+  filter: saturate(1.05) contrast(1.03);
+  z-index:-3;
+  will-change: transform;
+}
+.hero-vignette{
+  position:absolute; inset:0; z-index:-2;
+  background:
+    radial-gradient(70% 55% at 50% 30%, rgba(7,5,12,0.15), rgba(7,5,12,0.82) 75%),
+    linear-gradient(180deg, rgba(7,5,12,0.55) 0%, rgba(7,5,12,0.35) 30%, rgba(7,5,12,0.92) 100%);
+}
+.hero-particles{ position:absolute; inset:0; z-index:-1; pointer-events:none }
+.ember{
+  position:absolute; bottom:-4%; width:5px; height:5px; border-radius:50%;
+  background: radial-gradient(circle, var(--z-gold), rgba(255,201,74,0));
+  box-shadow: 0 0 12px 3px rgba(255,201,74,0.55);
+  animation-name: emberRise; animation-timing-function: ease-in; animation-iteration-count: infinite;
+  opacity:.75;
+}
+@keyframes emberRise{
+  0%{ transform: translateY(0) translateX(0); opacity:0 }
+  10%{ opacity:.8 }
+  100%{ transform: translateY(-115vh) translateX(24px); opacity:0 }
+}
+
+.hero-kicker{
+  font-family: var(--z-body); font-weight:700; letter-spacing:6px; font-size:13px;
+  color: var(--z-gold); margin-bottom: 18px; text-transform: uppercase;
+}
+.hero-cine-title{
+  font-family: var(--z-display);
+  font-size: clamp(72px, 14vw, 190px);
+  line-height: 0.86;
+  margin: 0;
+  color: #fff;
+  letter-spacing: 4px;
+  text-shadow: 0 0 60px rgba(168,107,255,0.55), 0 12px 40px rgba(0,0,0,0.6);
+}
+.hero-cine-subtitle{
+  font-family: var(--z-display);
+  font-size: clamp(20px, 3vw, 34px);
+  letter-spacing: 10px;
+  color: var(--z-violet);
+  margin-top: 4px;
+}
+.hero-cine-lead{
+  font-family: var(--z-body);
+  font-weight: 400;
+  color: rgba(246,243,255,0.88);
+  font-size: 18px;
+  max-width: 620px;
+  margin: 26px auto 0;
+  line-height: 1.7;
+}
+.hero-cine-actions{
+  display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin-top: 40px;
+}
+.btn-cine{
+  font-family: var(--z-body); font-weight:800; font-size:14px; letter-spacing:1.2px;
+  padding: 16px 30px; border-radius: 4px; border: none; cursor:pointer; text-decoration:none;
+  display:inline-flex; align-items:center; gap:8px; transition: transform .2s ease, box-shadow .2s ease;
+}
+.btn-cine:hover{ transform: translateY(-3px) }
+.btn-cine-primary{
+  background: linear-gradient(120deg, var(--z-violet), var(--z-purple));
+  color:#fff; box-shadow: 0 14px 30px rgba(106,59,209,0.45);
+}
+.btn-cine-ghost{
+  background: transparent; color:#fff; border: 1.5px solid rgba(255,255,255,0.4);
+}
+.btn-cine-ghost:hover{ border-color: var(--z-gold); color: var(--z-gold) }
+.btn-cine-token{
+  background: transparent; color: var(--z-gold); border: 1.5px solid rgba(255,201,74,0.5);
+}
+.btn-cine-token:hover{ background: rgba(255,201,74,0.1) }
+
+.hero-cine-art{ display:none }
+
+.scroll-cue{
+  position:absolute; bottom: 34px; left:50%; transform:translateX(-50%);
+  background:none; border:none; color: rgba(255,255,255,0.75); font-family: var(--z-body);
+  font-size:11px; letter-spacing:3px; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer;
+}
+.scroll-cue-line{ width:1px; height:36px; background: linear-gradient(180deg, rgba(255,255,255,0.9), transparent); animation: scrollCue 1.8s ease-in-out infinite }
+@keyframes scrollCue{ 0%{ opacity:0; transform: scaleY(.3); transform-origin:top } 50%{ opacity:1; transform: scaleY(1); transform-origin:top } 100%{ opacity:0; transform: scaleY(.3); transform-origin:bottom } }
+
+@media (max-width:900px){
+  .hero-cinematic{ padding: 140px 20px 90px }
+  .hero-cine-title{ letter-spacing:1px }
+}
+
+/* ---------- Eyebrow labels ---------- */
+.eyebrow{
+  display:inline-block; font-family: var(--z-body); font-weight:800; font-size:12px;
+  letter-spacing: 4px; color: var(--z-gold); text-transform: uppercase; margin-bottom:14px;
+}
+.eyebrow-light{ color: var(--z-gold) }
+
+/* ---------- Universe pillars ---------- */
+.universe-section{ position:relative; padding: 110px 24px; background: linear-gradient(180deg, transparent, rgba(42,19,80,0.35) 20%, rgba(42,19,80,0.35) 80%, transparent) }
+.universe-inner{ max-width:1280px; margin:0 auto }
+.universe-head{ max-width:720px; margin: 0 auto 64px; text-align:center }
+.universe-title{ font-family: var(--z-display); font-size: clamp(36px, 5vw, 64px); color:#fff; margin:0 0 16px; letter-spacing:1px }
+.universe-lead{ font-family: var(--z-body); color: rgba(246,243,255,0.78); font-size:17px; line-height:1.7; margin:0 }
+
+.universe-grid{ display:grid; grid-template-columns: repeat(5, 1fr); gap: 22px }
+.universe-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 18px;
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.universe-card:hover{ transform: translateY(-8px); border-color: rgba(255,201,74,0.4); box-shadow: 0 24px 48px rgba(0,0,0,0.4) }
+.universe-card-media{ position:relative; width:100%; aspect-ratio: 1/1; border-radius:8px; overflow:hidden; margin-bottom:16px; background:#150c28 }
+.universe-card-media img{ width:100%; height:100%; object-fit:cover; transition: transform .5s ease }
+.universe-card:hover .universe-card-media img{ transform: scale(1.08) }
+.universe-card-tag{
+  position:absolute; top:8px; left:8px; font-family: var(--z-display); font-size:12px; color:#fff;
+  background: rgba(0,0,0,0.55); padding:3px 8px; border-radius:4px; letter-spacing:1px;
+}
+.universe-card h3{ font-family: var(--z-display); font-size:18px; letter-spacing:1px; color:#fff; margin:0 0 8px }
+.universe-card p{ font-family: var(--z-body); font-size:13.5px; color: rgba(246,243,255,0.72); line-height:1.6; margin:0 }
+
+@media (max-width:1100px){
+  .universe-grid{ grid-template-columns: repeat(3,1fr) }
+}
+@media (max-width:640px){
+  .universe-grid{ grid-template-columns: repeat(2,1fr) }
+  .universe-section{ padding: 70px 18px }
+}
+
+/* ---------- Games showcase (home) ---------- */
+.games-showcase{ position:relative; padding: 100px 24px; background: linear-gradient(180deg, rgba(13,9,23,0.4), rgba(13,9,23,0.9)) }
+.games-showcase-inner{ max-width:1200px; margin:0 auto }
+.games-head{ max-width:640px; margin:0 auto 48px; text-align:center }
+.games-title{ font-family: var(--z-display); font-size: clamp(34px,5vw,58px); color:#fff; margin:0 0 14px; letter-spacing:1px }
+.games-lead{ font-family: var(--z-body); color: rgba(246,243,255,0.76); font-size:16px; margin:0 }
+
+.games-featured{ border-radius:14px; overflow:hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.08) }
+.games-featured-media{ position:relative; width:100%; aspect-ratio: 16/8 }
+.games-featured-media img{ width:100%; height:100%; object-fit:cover; display:block; transition: transform .6s ease }
+.games-featured-scrim{ position:absolute; inset:0; background: linear-gradient(0deg, rgba(0,0,0,0.85), rgba(0,0,0,0.05) 55%) }
+.games-featured-lock{
+  position:absolute; top:20px; right:20px; background: rgba(0,0,0,0.6); color:#fff;
+  font-family: var(--z-body); font-weight:800; font-size:12px; letter-spacing:1px; padding:8px 14px; border-radius:999px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.games-featured-title{
+  position:absolute; left:24px; bottom:20px; font-family: var(--z-display); color:#fff; font-size: clamp(22px,3vw,34px); letter-spacing:1px;
+}
+
+.games-rail{ display:flex; gap:14px; margin-top:22px; overflow-x:auto; padding-bottom:6px }
+.games-thumb{
+  flex: 0 0 auto; width: 140px; aspect-ratio: 16/10; border-radius:8px; overflow:hidden; border: 2px solid transparent;
+  padding:0; cursor:pointer; background:#150c28; opacity:.55; transition: opacity .25s ease, border-color .25s ease, transform .25s ease;
+}
+.games-thumb img{ width:100%; height:100%; object-fit:cover; display:block }
+.games-thumb:hover{ opacity:.85; transform: translateY(-3px) }
+.games-thumb.active{ opacity:1; border-color: var(--z-gold) }
+.games-showcase-cta{ text-align:center; margin-top:40px }
+
+@media (max-width:640px){
+  .games-showcase{ padding:64px 16px }
+  .games-thumb{ width:112px }
+}
+
+/* ---------- Animation teaser ---------- */
+.animation-teaser{ position:relative; min-height: 78vh; display:flex; align-items:center; padding: 100px 24px; overflow:hidden; isolation:isolate }
+.animation-bg{ position:absolute; inset:0; background-size:cover; background-position:center; filter: saturate(1.1) contrast(1.05); z-index:-2 }
+.animation-scrim{ position:absolute; inset:0; z-index:-1;
+  background: linear-gradient(90deg, rgba(7,5,12,0.96) 10%, rgba(7,5,12,0.55) 55%, rgba(7,5,12,0.92) 100%);
+}
+.animation-inner{ max-width:640px; margin: 0 auto; text-align:center }
+.animation-title{ font-family: var(--z-display); font-size: clamp(36px,6vw,72px); color:#fff; line-height:1.02; letter-spacing:1px; margin:0 0 22px; text-shadow: 0 10px 40px rgba(0,0,0,0.6) }
+.animation-lead{ font-family: var(--z-body); color: rgba(246,243,255,0.85); font-size:17px; line-height:1.75; margin:0 0 28px }
+.animation-cta{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap }
+.film-badge{
+  font-family: var(--z-body); font-weight:800; font-size:11px; letter-spacing:2px; color:#fff;
+  border: 1px solid rgba(255,255,255,0.35); padding:9px 16px; border-radius:999px; text-transform:uppercase;
+}
+
+@media (max-width:640px){
+  .animation-teaser{ padding: 70px 18px; min-height:60vh }
+}
+
+/* ---------- De-emphasize crypto-forward sections ---------- */
+.howto-section{ background: linear-gradient(180deg, rgba(13,9,23,0.9), rgba(13,9,23,0.75)); padding: 90px 24px }
+.howto-title, .tokenomics-title, .products-title{ font-family: var(--z-display); letter-spacing:1px }
+.tokenomics-section{ background: linear-gradient(180deg, rgba(13,9,23,0.75), rgba(13,9,23,0.95)) }
+.contact-section{ background: linear-gradient(180deg, rgba(13,9,23,0.95), rgba(7,5,12,1)) }
+.products-section{ background: linear-gradient(180deg, rgba(42,19,80,0.55), rgba(13,9,23,0.9)) }
+.partners-section{ background: linear-gradient(180deg, rgba(7,5,12,1), rgba(13,9,23,0.95)) }
+
+/* Ember/particle look for the ambient Snow layer (repurposed as floating dust) */
+.snow-flake{ color: rgba(255,201,74,0.7); text-shadow: 0 0 8px rgba(255,201,74,0.6) }
+
+/* Ticker dot accent */
+.zuba-item .dot{ color: var(--z-gold); margin-left:14px; font-size:0.6em; vertical-align:middle }
+.zuba-banner{ background: linear-gradient(90deg, var(--z-purple-deep), var(--z-purple)) }
+
+/* Restyle the product card to match the dark cinematic theme */
+.product-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+}
+.product-caption, .product-details{ color: rgba(246,243,255,0.75) }
+.product-body h3{ font-family: var(--z-display); letter-spacing: .5px }
+@media (max-width:900px){
+  .product-card.active{ background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02)); border-color: rgba(255,255,255,0.12) }
+}
+
+/* Section headings across the site adopt the cinematic display face */
+.about-title, .about-card h2, .mv-column h2, .building-title, .dna-title, .why-title, .welcome-title,
+.comic-title, .mesh-title, .wallpaper-content h1, .blog-hero-title, .article-title, .footer-brand{
+  font-family: var(--z-display);
+  letter-spacing: 1px;
+}
+

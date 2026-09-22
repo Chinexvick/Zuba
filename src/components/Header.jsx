@@ -40,13 +40,13 @@ export default function Header({ onNavigate = () => {} }) {
 
         <nav className="nav">
           <a onClick={() => handleNavigate('home')} role="button" tabIndex={0}>Home</a>
-          <a onClick={() => handleNavigate('wallpapers')} role="button" tabIndex={0}>Wallpapers</a>
-          <a onClick={() => handleNavigate('mesh')} role="button" tabIndex={0}>Mesh</a>
-          <a onClick={() => handleNavigate('comics')} role="button" tabIndex={0}>Comics</a>
           <a onClick={() => handleNavigate('games')} role="button" tabIndex={0}>Games</a>
-          <a href="https://dexscreener.com/bsc/0xdcc6c7cb227dc0d3544717902dcd92e4bac15a7e" target="_blank" rel="noopener noreferrer">Chart</a>
+          <a onClick={() => handleNavigate('comics')} role="button" tabIndex={0}>Animation</a>
+          <a onClick={() => handleNavigate('mesh')} role="button" tabIndex={0}>Mesh</a>
+          <a onClick={() => handleNavigate('wallpapers')} role="button" tabIndex={0}>Wallpapers</a>
           <a onClick={() => handleNavigate('about')} role="button" tabIndex={0}>About</a>
           <a onClick={() => handleNavigate('blog')} role="button" tabIndex={0}>Blog</a>
+          <a className="nav-token" href="https://dexscreener.com/bsc/0xdcc6c7cb227dc0d3544717902dcd92e4bac15a7e" target="_blank" rel="noopener noreferrer">$ZUBA</a>
         </nav>
 
          <button type="button" className="join-btn menu-join-btn" onClick={() => { setOpen(false); window.open('https://t.me/zubacommunitychat', '_blank') }}>JOIN COMMUNITY</button>
@@ -75,13 +75,13 @@ export default function Header({ onNavigate = () => {} }) {
             <nav className="mobile-links" onClick={(e) => e.stopPropagation()}>
               <div className="menu-box">
                 <button type="button" className="mobile-link menu-item" ref={firstLinkRef} onClick={() => handleNavigate('home')}>Home</button>
-                <button type="button" className="mobile-link menu-item" onClick={() => handleNavigate('wallpapers')}>Wallpapers</button>
-                <button type="button" className="mobile-link menu-item" onClick={() => handleNavigate('mesh')}>Mesh</button>
-                <button type="button" className="mobile-link menu-item" onClick={() => handleNavigate('comics')}>Comics</button>
                 <button type="button" className="mobile-link menu-item" onClick={() => handleNavigate('games')}>Games</button>
-                <a className="menu-item" href="https://dexscreener.com/bsc/0xdcc6c7cb227dc0d3544717902dcd92e4bac15a7e" target="_blank" rel="noopener noreferrer">Chart</a>
+                <button type="button" className="mobile-link menu-item" onClick={() => handleNavigate('comics')}>Animation</button>
+                <button type="button" className="mobile-link menu-item" onClick={() => handleNavigate('mesh')}>Mesh</button>
+                <button type="button" className="mobile-link menu-item" onClick={() => handleNavigate('wallpapers')}>Wallpapers</button>
                 <button type="button" className="mobile-link menu-item" onClick={() => handleNavigate('about')}>About</button>
                 <button type="button" className="mobile-link menu-item" onClick={() => handleNavigate('blog')}>Blog</button>
+                <a className="menu-item" href="https://dexscreener.com/bsc/0xdcc6c7cb227dc0d3544717902dcd92e4bac15a7e" target="_blank" rel="noopener noreferrer">$ZUBA Chart</a>
 
                 {/* Prominent in-menu Join CTA so it is always visible */}
                 <div className="menu-join">
